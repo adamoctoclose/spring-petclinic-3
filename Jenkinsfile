@@ -1,45 +1,43 @@
 pipeline {
-    agent {
-        label 'docker'
-    }
-    //  parameters here provide the shared values used with each of the Octopus pipeline steps.
-    parameters {
-        // The space ID that we will be working with. The default space is typically Spaces-1.
-        string(defaultValue: 'Spaces-1', description: '', name: 'SpaceId', trim: true)
-        // The Octopus project we will be deploying.
-        string(defaultValue: 'Petclinic', description: '', name: 'ProjectName', trim: true)
-        // The environment we will be deploying to.
-        string(defaultValue: 'Dev', description: '', name: 'EnvironmentName', trim: true)
-        // The name of the Octopus instance in Jenkins that we will be working with. This is set in:
-        // Manage Jenkins -> Configure System -> Octopus Deploy Plugin
-        string(defaultValue: 'Octopus', description: '', name: 'ServerId', trim: true)
+    agent any
+    tools {
+        maven 'maven 3'
+        jdk 'jdk'
     }
     stages {
-        stage ('Add tools') {
+        stage ('Initialize') {
             steps {
-                tool('OctoCLI')
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
             }
         }
-        stage('Building our image') {
+
+        stage ('Build') {
             steps {
-                script {
-                    dockerImage = docker.build "mcasperson/petclinic:$BUILD_NUMBER"
+                sh 'mvn versions:set -DnewVersion=3.0.${BUILD_NUMBER}'
+                sh 'mvn package -Pwar'
+            }
+        }
+        
+        stage ('Pack Flyway') {
+            steps {
+                    sh """
+                        echo ""
+                        ${tool('Octo CLI')}octo pack --id petclinic.flyway --format zip --version 3.0.${BUILD_NUMBER} --outFolder target --basePath flyway                   
+                    """
                 }
             }
-        }
-        stage('Deploy our image') {
+        
+        stage ('Push to Octopus') {
             steps {
-                script {
-                    // Assume the Docker Hub registry by passing an empty string as the first parameter
-                    docker.withRegistry('' , 'dockerhub') {
-                        dockerImage.push()
-                    }
+                withCredentials([string(credentialsId: 'OctopusAPIKey', variable: 'APIKey')]) {
+                    sh """
+                        ${tool('Octo CLI')}octo push --package target/petclinic.3.0.${BUILD_NUMBER}.war --replace-existing --server https://samples.octopus.app --apiKey ${APIKey} --space Spaces-203
+                        ${tool('Octo CLI')}octo push --package target/petclinic.flyway.3.0.${BUILD_NUMBER}.zip --replace-existing --server https://samples.octopus.app --apiKey ${APIKey} --space Spaces-203                       
+                    """
                 }
-            }
-        }
-        stage('deploy') {
-            steps {                                
-                octopusCreateRelease deployThisRelease: true, environment: "${EnvironmentName}", project: "${ProjectName}", releaseVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', waitForDeployment: true                
             }
         }
     }
