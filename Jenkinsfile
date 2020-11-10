@@ -6,7 +6,7 @@ pipeline {
         // The Octopus project we will be deploying.
         string(defaultValue: 'Pet Clinic', description: '', name: 'ProjectName', trim: true)
         // The environment we will be deploying to.
-        string(defaultValue: 'Dev', description: '', name: 'EnvironmentName', trim: true)
+        string(defaultValue: 'Dev', description: '', name: 'DevEnvironmentName', trim: true)
         // The name of the Octopus instance in Jenkins that we will be working with. This is set in:
         // Manage Jenkins -> Configure System -> Octopus Deploy Plugin
         string(defaultValue: 'Octopus', description: '', name: 'ServerId', trim: true)
@@ -39,7 +39,7 @@ pipeline {
         stage('deploy') {
             steps {
                 octopusCreateRelease additionalArgs: '', cancelOnTimeout: false, channel: '', defaultPackageVersion: '', deployThisRelease: false, deploymentTimeout: '', environment: "${EnvironmentName}", jenkinsUrlLinkback: false, project: "${ProjectName}", releaseNotes: false, releaseNotesFile: '', releaseVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", tenant: '', tenantTag: '', toolId: 'Default', verboseLogging: false, waitForDeployment: false
-                octopusDeployRelease cancelOnTimeout: false, deploymentTimeout: '', environment: "${EnvironmentName}", project: "${ProjectName}", releaseVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", tenant: '', tenantTag: '', toolId: 'Default', variables: '', verboseLogging: false, waitForDeployment: true
+                octopusDeployRelease cancelOnTimeout: false, deploymentTimeout: '', environment: "${DevEnvironmentName}", project: "${ProjectName}", releaseVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", tenant: '', tenantTag: '', toolId: 'Default', variables: '', verboseLogging: false, waitForDeployment: true
             }
         }
     }
