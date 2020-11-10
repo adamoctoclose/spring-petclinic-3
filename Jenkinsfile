@@ -42,8 +42,9 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                octopusPack additionalArgs: '', outputPath: "${env.WORKSPACE}", overwriteExisting: false, packageFormat: 'zip', packageId: 'petclinic.flyway', packageVersion: "1.0.${BUILD_NUMBER}", sourcePath: 'flyway', toolId: 'Default', verboseLogging: false
-                octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.web.1.0.${BUILD_NUMBER}.war\n${env.WORKSPACE}/target/petclinic.flyway.1.0.${BUILD_NUMBER}.zip", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
+                octopusPack additionalArgs: '', outputPath: "${env.WORKSPACE}/target", overwriteExisting: false, packageFormat: 'zip', packageId: 'petclinic.flyway', packageVersion: "1.0.${BUILD_NUMBER}", sourcePath: 'flyway', toolId: 'Default', verboseLogging: false
+                octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.web.1.0.${BUILD_NUMBER}.war", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
+                octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.flyway.1.0.${BUILD_NUMBER}.zip", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
                 /*
                     Note that the gitUrl param is passed manually from the environment variable populated when this Jenkinsfile is downloaded from Git.
                     This is from the Jenkins "Global Variable Reference" documentation:
@@ -60,7 +61,7 @@ pipeline {
                         }
                     }
                 */
-                octopusPushBuildInformation additionalArgs: '', commentParser: 'GitHub', overwriteMode: 'FailIfExists', packageId: 'petclinic.web', packageVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', verboseLogging: false, gitUrl: "${GIT_URL}", gitCommit: "${GIT_COMMIT}"
+                octopusPushBuildInformation additionalArgs: '', commentParser: 'GitHub', overwriteMode: 'FailIfExists', packageId: 'petclinic.web', packageVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', verboseLogging: false, gitUrl: 'main', gitCommit: "${GIT_COMMIT}"
             }
         }
     }
