@@ -60,14 +60,6 @@ pipeline {
         }
         stage('push') {
             steps {
-               script {
-                    def checkoutVars = checkout([$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/adamoctoclose/spring-petclinic-3.git']]])
-                    env.GIT_URL = checkoutVars.GIT_URL
-                    env.GIT_BRANCH = checkoutVars.GIT_BRANCH
-                    env.GIT_COMMIT = checkoutVars.GIT_COMMIT
-    }
-}
-            steps {
                 octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.web.1.0.${BUILD_NUMBER}.war", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
                 octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.flyway.1.0.${BUILD_NUMBER}.zip", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
                 octopusPushBuildInformation additionalArgs: '', commentParser: 'GitHub', overwriteMode: 'FailIfExists', packageId: 'petclinic.web', packageVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', verboseLogging: false, gitUrl: "${GIT_URL}", gitCommit: "${GIT_COMMIT}"
