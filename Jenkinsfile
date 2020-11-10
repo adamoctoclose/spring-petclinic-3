@@ -42,7 +42,6 @@ pipeline {
         }
         stage('deploy') {
             steps {                
-                octopusPack additionalArgs: '', outputPath: "${env.WORKSPACE}\target", overwriteExisting: false, packageFormat: 'zip', packageId: 'randomquotes', packageVersion: "1.0.${BUILD_NUMBER}", sourcePath: '', toolId: 'Default', verboseLogging: false
                 octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/petclinic.web.1.0.${BUILD_NUMBER}.jar", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default'
                 /*
                     Note that the gitUrl param is passed manually from the environment variable populated when this Jenkinsfile is downloaded from Git.
