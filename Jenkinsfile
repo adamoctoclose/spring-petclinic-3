@@ -23,7 +23,7 @@ pipeline {
         stage('build') {
             steps {
                 // Update the Maven project version to match the current build
-                sh(script: "mvn versions:set -DnewVersion=1.0.${BUILD_NUMBER}", returnStdout: true)
+                sh(script: "mvn versions:set -DnewVersion=2.0.${BUILD_NUMBER}", returnStdout: true)
                 // Package the code
                 sh(script: "mvn package -Pwar", returnStdout: true)
             }
