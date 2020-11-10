@@ -40,11 +40,6 @@ pipeline {
             }
         }
         
-        stage ('Add tools') {
-            steps {
-                sh "echo \"OctoCLI: ${tool('OctoCLI')}\""
-            }
-        }
         stage('build') {
             steps {
                 // Update the Maven project version to match the current build
