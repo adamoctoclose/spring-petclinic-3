@@ -48,6 +48,11 @@ pipeline {
                 sh(script: "mvn package -Pwar")
             }
         }
+        stage ('Add tools') {
+            steps {
+                sh "echo \"OctoCLI: ${tool('OctoCLI')}\""
+            }
+        }
         stage('pack'){
             steps {
                octopusPack additionalArgs: '', outputPath: "${env.WORKSPACE}/target", overwriteExisting: false, packageFormat: 'zip', packageId: 'petclinic.flyway', packageVersion: "1.0.${BUILD_NUMBER}", sourcePath: 'flyway', toolId: 'Default', verboseLogging: false
