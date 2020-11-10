@@ -37,7 +37,7 @@ pipeline {
                 // Update the Maven project version to match the current build
                 sh(script: "mvn versions:set -DnewVersion=1.0.${BUILD_NUMBER}", returnStdout: true)
                 // Package the code
-                sh(script: "mvn package", returnStdout: true)
+                sh(script: "mvn package -Pwar", returnStdout: true)
             }
         }
         stage('deploy') {
