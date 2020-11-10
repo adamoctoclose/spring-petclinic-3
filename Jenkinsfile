@@ -16,7 +16,6 @@ pipeline {
     */
     tools {
         maven 'Maven 3'
-        jdk 'Java'
     }
     agent any
     stages {
