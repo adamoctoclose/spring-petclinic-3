@@ -19,6 +19,12 @@ pipeline {
     }
     agent any
     stages {
+        
+        stage ('Add tools') {
+            steps {
+                sh "echo \"OctoCLI: ${tool('OctoCLI')}\""
+            }
+        }
 
         stage('build') {
             steps {
